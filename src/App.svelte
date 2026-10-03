@@ -1,6 +1,4 @@
 <script lang="ts">
-  import svelteLogo from "./assets/svelte.svg";
-
   let currentVocab = $state("sopimus");
   let answerInput = $state("");
 
@@ -24,7 +22,7 @@
       return;
     }
 
-    if (answerInput === "agreement") {
+    if (answerInput.toLowerCase() === "agreement") {
       console.log("correct");
       showingCorrect = true;
     } else {
@@ -39,8 +37,7 @@
 </script>
 
 <section id="topbar">
-  <img class="logo" src={svelteLogo} alt="" />
-  <h2>Suomex</h2>
+  <h2>🇫🇮 Suomex</h2>
 </section>
 
 <section id="center">
