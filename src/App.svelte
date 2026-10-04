@@ -1,70 +1,27 @@
 <script lang="ts">
-  let currentVocab = $state("sopimus");
-  let answerInput = $state("");
+  import type { Component } from "svelte";
+  import Home from "./pages/Home.svelte";
+  import Review from "./pages/Review.svelte";
 
-  let showingCorrect = $state(false);
-  let showingWrong = $state(false);
-  let solution = $state("");
-  let showingSolution = $state(false);
+  const routes: Record<string, Component> = {
+    "/": Home,
+    "/review": Review,
+  };
 
-  function checkAnswer() {
-    if (showingCorrect || showingWrong) {
-      console.log("next word");
-      currentVocab = "viesti";
-      showingCorrect = false;
-      showingWrong = false;
-      answerInput = "";
-      solution = "";
-      return;
-    }
-
-    if (answerInput === "") {
-      return;
-    }
-
-    if (answerInput.toLowerCase() === "agreement") {
-      console.log("correct");
-      showingCorrect = true;
-    } else {
-      showingWrong = true;
-    }
+  function getCurrentRoute(): string {
+    let path = location.hash.slice(1) || "/";
+    console.log(path);
+    return path;
   }
 
-  function showSolution() {
-    showingSolution = true;
-    solution = "agreement";
+  function navigateTo(route: string) {
+    location.hash = route;
   }
+
+  let route = $state(getCurrentRoute());
+  let Page = $derived(routes[route] ?? Home);
 </script>
 
-<section id="topbar">
-  <h2>🇫🇮 Suomex</h2>
-</section>
+<svelte:window on:hashchange={() => (route = getCurrentRoute())} />
 
-<section id="center">
-  <h2>{currentVocab}</h2>
-  <div id="answer-input">
-    <form
-      onsubmit={(e) => {
-        e.preventDefault();
-        checkAnswer();
-      }}
-    >
-      <input
-        type="text"
-        bind:value={answerInput}
-        readonly={showingCorrect || showingWrong}
-        placeholder="kirjoita vastaus.."
-      />
-    </form>
-    <button onclick={checkAnswer}>➡</button>
-  </div>
-  <h3 hidden={!showingCorrect}>✅ Correct!</h3>
-
-  <div hidden={!showingWrong}>
-    <h3>🚫 Wrong!</h3>
-    <button onclick={showSolution}>Show Solution</button>
-    <h2 hidden={!showingSolution}>{solution}</h2>
-  </div>
-</section>
-
-<section id="spacer"></section>
+<Page />
